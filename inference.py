@@ -7,11 +7,17 @@ from glob import glob
 import torch, face_detection
 from models import Wav2Lip
 import platform
+import ttskit_sdk_api
 
 parser = argparse.ArgumentParser(description='Inference code to lip-sync videos in the wild using Wav2Lip models')
 
 parser.add_argument('--checkpoint_path', type=str, 
 					help='Name of saved checkpoint to load weights from', required=True)
+
+parser.add_argument('--tts_text', type=str, help='TTS text', required=True)
+
+parser.add_argument('--tts_resource_path', type=str, 
+					help='Path of tts checkpoint to load weights from', required=True)
 
 parser.add_argument('--face', type=str, 
 					help='Filepath of video/image that contains faces to use', required=True)
@@ -222,6 +228,9 @@ def main():
 
 		subprocess.call(command, shell=True)
 		args.audio = 'temp/temp.wav'
+
+	ttskit_sdk_api.tts_sdk(args.tts_text, audio=args.audio, output='temp/temp_tts.wav', resource_path=args.tts_resource_path)
+	args.audio = 'temp/temp_tts.wav'
 
 	wav = audio.load_wav(args.audio, 16000)
 	mel = audio.melspectrogram(wav)
