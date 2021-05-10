@@ -15,5 +15,4 @@ resource/*
 *.gif
 *.webm
 *.mp3
-out_temp1/
-out_temp2/
+temp/
