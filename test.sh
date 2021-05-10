@@ -1,0 +1,1 @@
+python inference.py --resize_factor 3 --nosmooth --checkpoint_path checkpoints/wav2lip_gan.pth --face test.mp4 --audio test.wav
