@@ -92,7 +92,7 @@ def face_detect(images):
 			raise ValueError('Face not detected! Ensure the video contains a face in all the frames.')
 
 		y1 = max(0, rect[1] - pady1)
-		y2 = min(image.shape[0], rect[3] + pady2)
+		y2 = min(image.shape[0], rect[3] + rect[3]/5 + pady2)
 		x1 = max(0, rect[0] - padx1)
 		x2 = min(image.shape[1], rect[2] + padx2)
 		
