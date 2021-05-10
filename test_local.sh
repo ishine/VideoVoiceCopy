@@ -1,1 +1,1 @@
-python inference.py --resize_factor 3 --nosmooth --tts_text '哦，一定要成功啊！' --tts_resource_path '../ttskit/ttskit' --checkpoint_path checkpoints/wav2lip_gan.pth --face test1.mp4 --audio test1.mp4
+python inference.py --resize_factor 3 --nosmooth --tts_text '哦，一定要成功啊！' --tts_resource_path '../ttskit/ttskit' --srmd_vulkan_path '../srmd-ncnn-vulkan-20210210-ubuntu/srmd-ncnn-vulkan' --checkpoint_path checkpoints/wav2lip_gan.pth --face test1.mp4 --audio test1.mp4

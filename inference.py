@@ -19,6 +19,9 @@ parser.add_argument('--tts_text', type=str, help='TTS text', required=True)
 parser.add_argument('--tts_resource_path', type=str, 
 					help='Path of tts checkpoint to load weights from', required=True)
 
+parser.add_argument('--srmd_vulkan_path', type=str, 
+					help='Path of srmd ncnn vulkan', required=True)
+
 parser.add_argument('--face', type=str, 
 					help='Filepath of video/image that contains faces to use', required=True)
 parser.add_argument('--audio', type=str, 
@@ -257,6 +260,13 @@ def main():
 	batch_size = args.wav2lip_batch_size
 	gen = datagen(full_frames.copy(), mel_chunks)
 
+	try:
+		os.mkdir("temp/out1")
+		os.mkdir("temp/out2")
+	except:
+		pass
+
+	index = 1
 	for i, (img_batch, mel_batch, frames, coords) in enumerate(tqdm(gen, 
 											total=int(np.ceil(float(len(mel_chunks))/batch_size)))):
 		if i == 0:
@@ -264,8 +274,6 @@ def main():
 			print ("Model loaded")
 
 			frame_h, frame_w = full_frames[0].shape[:-1]
-			out = cv2.VideoWriter('temp/result.avi', 
-									cv2.VideoWriter_fourcc(*'VIDX'), fps, (frame_w, frame_h))
 
 		img_batch = torch.FloatTensor(np.transpose(img_batch, (0, 3, 1, 2))).to(device)
 		mel_batch = torch.FloatTensor(np.transpose(mel_batch, (0, 3, 1, 2))).to(device)
@@ -280,11 +288,16 @@ def main():
 			p = cv2.resize(p.astype(np.uint8), (x2 - x1, y2 - y1))
 
 			f[y1:y2, x1:x2] = p
-			out.write(f)
+			cv2.imwrite("out_temp1/img_" + str(index) + ".png", f)
+			index = index + 1
 
-	out.release()
+	command = '"' + args.srmd_vulkan_path + '" -i temp/out1 -o temp/out2 -s 4 -n 8 -m "' + args.srmd_vulkan_path + '/models-srmd"' 
+	subprocess.call(command, shell=platform.system() != 'Windows')
 
-	command = 'ffmpeg -y -i {} -i {} -strict -2 -q:v 1 {}'.format(args.audio, 'temp/result.avi', args.outfile)
+	command = 'ffmpeg -r 25.0 -hwaccel auto -y -f image2 -i temp/out2/img_%d.png -vcodec libx264 -pix_fmt yuv420p -crf 17 -vf pad=ceil(iw/2)*2:ceil(ih/2)*2 -tune animation temp/temp.mkv'
+	subprocess.call(command, shell=platform.system() != 'Windows')
+
+	command = 'ffmpeg -hwaccel auto -y -i {} -i {} -strict -2 -q:v 1 {}'.format(args.audio, 'temp/temp.mkv', args.outfile)
 	subprocess.call(command, shell=platform.system() != 'Windows')
 
 if __name__ == '__main__':
