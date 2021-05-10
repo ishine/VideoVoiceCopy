@@ -288,7 +288,7 @@ def main():
 			p = cv2.resize(p.astype(np.uint8), (x2 - x1, y2 - y1))
 
 			f[y1:y2, x1:x2] = p
-			cv2.imwrite("out_temp1/img_" + str(index) + ".png", f)
+			cv2.imwrite("temp/out1/img_" + str(index) + ".png", f)
 			index = index + 1
 
 	command = '"' + args.srmd_vulkan_path + '" -i temp/out1 -o temp/out2 -s 4 -n 8 -j 1:1:1 -f png -g 0 -m "' + args.srmd_vulkan_path + '/models-srmd"' 
