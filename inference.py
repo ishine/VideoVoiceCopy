@@ -291,7 +291,7 @@ def main():
 			cv2.imwrite("out_temp1/img_" + str(index) + ".png", f)
 			index = index + 1
 
-	command = '"' + args.srmd_vulkan_path + '" -i temp/out1 -o temp/out2 -s 4 -n 8 -m "' + args.srmd_vulkan_path + '/models-srmd"' 
+	command = '"' + args.srmd_vulkan_path + '" -i temp/out1 -o temp/out2 -s 4 -n 8 -j 1:1:1 -f png -g 0 -m "' + args.srmd_vulkan_path + '/models-srmd"' 
 	subprocess.call(command, shell=platform.system() != 'Windows')
 
 	command = 'ffmpeg -r 25.0 -hwaccel auto -y -f image2 -i temp/out2/img_%d.png -vcodec libx264 -pix_fmt yuv420p -crf 17 -vf pad=ceil(iw/2)*2:ceil(ih/2)*2 -tune animation temp/temp.mkv'
